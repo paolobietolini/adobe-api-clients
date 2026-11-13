@@ -98,4 +98,4 @@ tests/
 
 ## License
 
-No license has been set yet.
+[BSD 3-Clause License](LICENSE)
