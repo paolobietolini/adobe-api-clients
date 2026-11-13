@@ -1,14 +1,20 @@
 {
-  "name": "adobe-api",
+  "name": "adobe-api-clients",
+  "exports": {
+    "./auth": "./src/clients/authClient.ts",
+    "./reactor": "./src/clients/reactorClient.ts",
+    "./analytics": "./src/clients/analyticsClient.ts"
+  },
   "version": "1.0.0",
+  "license":"BSD-3-Clause",
   "description": "",
-  "homepage": "https://github.com/paolobietolini/adobe-api#readme",
+  "homepage": "https://github.com/paolobietolini/adobe-api-clients#readme",
   "bugs": {
-    "url": "https://github.com/paolobietolini/adobe-api/issues"
+    "url": "https://github.com/paolobietolini/adobe-api-clients/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/paolobietolini/adobe-api.git"
+    "url": "git+https://github.com/paolobietolini/adobe-api-clients.git"
   },
   "type": "module",
   "main": "index.js",
@@ -22,3 +28,5 @@
     "@types/node": "^26.6.6"
   }
 }
+
+
