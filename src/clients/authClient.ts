@@ -1,15 +1,15 @@
-import { AdobeApiError } from "../utils/errors.js";
-import { readCache, writeCache } from "../utils/store.js";
-import type { TokenCached, TokenResponse, AuthCredentials } from "../utils/types.js";
-
-
+import { AdobeApiError } from "../utils/errors.ts";
+import { readCache, writeCache } from "../utils/store.ts";
+import type {
+  TokenCached,
+  TokenResponse,
+  AuthCredentials,
+} from "../utils/types.ts";
 
 const EXPIRES_BUFFER = 60 * 30 * 1000; // 30 minutes
 
-function isTokenExpired(token: TokenCached) {
-  return token === null
-    ? false
-    : (token.expires_at - EXPIRES_BUFFER) < Date.now();
+function isTokenExpired(token: TokenCached): boolean {
+  return token.expires_at - EXPIRES_BUFFER < Date.now();
 }
 
 export class AuthClient {
@@ -21,7 +21,7 @@ export class AuthClient {
   private cacheFile: string;
   constructor(
     { clientId, clientSecret, scope }: AuthCredentials,
-    cacheFile = ".cache/adobe-token.json"
+    cacheFile = ".cache/adobe-token.json",
   ) {
     this.clientId = clientId;
     this.clientSecret = clientSecret;
@@ -32,20 +32,24 @@ export class AuthClient {
     const resource = new URL("ims/token/v3", "https://ims-na1.adobelogin.com");
     const options: RequestInit = {
       method: "POST",
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({
         client_id: this.clientId,
         client_secret: this.clientSecret,
         scope: this.scope,
-        'grant_type': 'client_credentials',
-      })
+        grant_type: "client_credentials",
+      }),
     };
     const request: Request = new Request(resource, options);
 
     const response = await fetch(request);
 
     if (!response.ok) {
-      throw new AdobeApiError(response.status, response.statusText, await response.text());
+      throw new AdobeApiError(
+        response.status,
+        response.statusText,
+        await response.text(),
+      );
     }
     return response.json() as Promise<TokenResponse>;
   }
@@ -58,10 +62,15 @@ export class AuthClient {
       };
 
       this.#token = token;
-      await writeCache(this.cacheFile, JSON.stringify(token));
+      try {
+        await writeCache(this.cacheFile, JSON.stringify(token));
+      } catch (err) {
+        console.warn(`Failed to write token cache to ${this.cacheFile}:`, err);
+      }
       return this.#token;
-    }
-    )().finally(() => { this.#inflight = null })
+    })().finally(() => {
+      this.#inflight = null;
+    });
 
     return this.#inflight;
   }
@@ -70,9 +79,17 @@ export class AuthClient {
     if (this.#token && !isTokenExpired(this.#token)) {
       return this.#token;
     }
-    let token = await readCache(this.cacheFile);
-    if (!isTokenExpired(token)) {
-      this.#token = token;
+    let cached: TokenCached | null = null;
+    try {
+      cached = await readCache(this.cacheFile);
+    } catch (err) {
+      console.warn(
+        `Failed to read token cache ${this.cacheFile}, fetching a new token:`,
+        err,
+      );
+    }
+    if (cached && !isTokenExpired(cached)) {
+      this.#token = cached;
       return this.#token;
     }
     return await this.#InFlight();
