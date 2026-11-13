@@ -1,4 +1,4 @@
-import type { TokenCached } from "./types.tsjust "
+import type { TokenCached } from "./types.ts"
 export function isTokenData(data: unknown): data is TokenCached {
   if (data === null) return false;
 
