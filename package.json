@@ -1,0 +1,24 @@
+{
+  "name": "adobe-api",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/paolobietolini/adobe-api#readme",
+  "bugs": {
+    "url": "https://github.com/paolobietolini/adobe-api/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/paolobietolini/adobe-api.git"
+  },
+  "type": "module",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "node --test"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6"
+  }
+}
