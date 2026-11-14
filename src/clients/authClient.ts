@@ -53,7 +53,7 @@ export class AuthClient {
     }
     return response.json() as Promise<TokenResponse>;
   }
-  async #InFlight(): Promise<TokenCached> {
+  #InFlight(): Promise<TokenCached> {
     this.#inflight ??= (async () => {
       const response = await this.#requestToken();
       const token = {
@@ -67,7 +67,7 @@ export class AuthClient {
       } catch (err) {
         console.warn(`Failed to write token cache to ${this.cacheFile}:`, err);
       }
-      return this.#token;
+      return token;
     })().finally(() => {
       this.#inflight = null;
     });
@@ -92,6 +92,6 @@ export class AuthClient {
       this.#token = cached;
       return this.#token;
     }
-    return await this.#InFlight();
+    return this.#InFlight();
   }
 }
