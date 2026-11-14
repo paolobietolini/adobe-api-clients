@@ -1,4 +1,4 @@
-export type Method = "POST" | "GET" | "DELETE" | "PUT";
+export type Method = "POST" | "GET" | "PUT" | "DELETE";
 
 export type QueryParams = Record<
   string,

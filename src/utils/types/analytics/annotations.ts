@@ -94,3 +94,5 @@ export type AnnotationCreate = {
   scope?: Annotation["scope"];
   tags?: Annotation["tags"];
 };
+
+export type AnnotationUpdate = Partial<AnnotationCreate>;
