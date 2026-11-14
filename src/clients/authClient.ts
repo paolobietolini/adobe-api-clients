@@ -121,7 +121,10 @@ export class AuthClient {
     })().finally(() => (this.#inflight = null));
     return this.#inflight;
   }
-
+  get clientId() {
+    return this.#clientId;
+  }
+  
   async getToken(): Promise<TokenCached> {
     if (this.#token && !isTokenExpired(this.#token)) return this.#token;
     return this.#load();
