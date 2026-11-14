@@ -1,37 +1,5 @@
-export type AuthCredentials = {
-  clientId: string;
-  clientSecret: string;
-  scope: string;
-};
-
-export type AuthSecrets = {
-  clientId: string;
-  clientSecret: string;
-  scope: string;
-};
-
-export type TokenResponse = {
-  access_token: string;
-  token_type: string; // "bearer"
-  expires_in: number; // seconds
-};
-
-export type TokenCached = TokenResponse & {
-  expires_at: number;
-  cache_key: string;
-};
-
-export type Method = "POST" | "GET" | "DELETE";
-
-export type QueryParams = Record<
-  string,
-  string | number | boolean | string[] | undefined | null
->;
-
-/** ISO 8601, `YYYY-MM-DDTHH:MM:SSZ` */
-export type ISODate = string;
-/** `YYYY-MM-DDTHH:MM:SSZ/YYYY-MM-DDTHH:MM:SSZ` */
-export type ISODateRange = `${string}/${string}`;
+import type { ISODate, ISODateRange } from "../http.ts";
+import type { AnalyticsLocale, PagedResponse } from "./common.ts";
 
 export type AnnotationColor =
   | "STANDARD1"
@@ -66,17 +34,6 @@ export type AnnotationExpansion =
 
 export type AnnotationIncludeType = "all" | "shared";
 
-export type AnnotationLocale =
-  | "en_US"
-  | "fr_FR"
-  | "ja_JP"
-  | "de_DE"
-  | "es_ES"
-  | "ko_KR"
-  | "pt_PR"
-  | "zh_CN"
-  | "zh_TW";
-
 /** Query parameters for GET /annotations */
 export type AnnotationParams = {
   /** Extra fields to include in each returned annotation */
@@ -84,7 +41,7 @@ export type AnnotationParams = {
   /** Default: only annotations owned by the user */
   includeType?: AnnotationIncludeType;
   /** Localizes Adobe-provided strings only, not user-defined ones */
-  locale?: AnnotationLocale;
+  locale?: AnalyticsLocale;
   /** Annotations modified after this date */
   filterByModifiedAfter?: ISODate;
   /** Annotations fully within this range */
@@ -121,14 +78,19 @@ export type Annotation = {
   rsid?: string;
 };
 
-/** Paged response of GET /annotations (paging fields per Adobe's usual list envelope) */
-export type AnnotationList = {
-  content: Annotation[];
-  totalElements?: number;
-  totalPages?: number;
-  number?: number;
-  size?: number;
-  firstPage?: boolean;
-  lastPage?: boolean;
-  numberOfElements?: number;
+export type AnnotationList = PagedResponse<Annotation>;
+export type AnnotationGetParams = Pick<
+  AnnotationParams,
+  "expansion" | "locale"
+>;
+
+export type AnnotationCreate = {
+  name: string;
+  rsid: string;
+  dateRange: ISODateRange;
+  color?: AnnotationColor;
+  description?: string;
+  applyToAllReports?: boolean;
+  scope?: Annotation["scope"];
+  tags?: Annotation["tags"];
 };

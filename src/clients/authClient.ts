@@ -7,7 +7,7 @@ import type {
   TokenCached,
   TokenResponse,
   AuthCredentials,
-} from "../utils/types.ts";
+} from "../utils/types/index.ts";
 import { cacheKey } from "../utils/crypto.ts";
 
 const EXPIRES_BUFFER = 60 * 30 * 1000; // 30 minutes

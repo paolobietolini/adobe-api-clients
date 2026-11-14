@@ -1,4 +1,4 @@
-import type { TokenCached, TokenResponse } from "./types.ts";
+import type { TokenCached, TokenResponse } from "./types/index.ts";
 export function isTokenData(data: unknown): data is TokenCached {
   if (!isTokenResponse(data)) return false;
   const t = data as unknown as Record<string, unknown>;

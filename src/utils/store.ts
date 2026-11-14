@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { mkdir, readFile, rename, rm, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
 import { isTokenData } from "./token.ts";
-import type { TokenCached } from "./types.ts";
+import type { TokenCached } from "./types/index.ts";
 
 export async function writeCache(
   destination: string,
