@@ -39,6 +39,10 @@ export async function readCache(dir: string): Promise<TokenCached | null> {
     if (error instanceof Error && "code" in error && error.code === "ENOENT") {
       return null;
     }
-    throw new Error(`Error while reading: "${dir}: ${error}`);
+    throw new Error(`Error while reading "${dir}": ${error}`, { cause: error });
   }
+}
+
+export async function deleteCache(path: string): Promise<void> {
+  await rm(path, { force: true });
 }

@@ -1,13 +1,24 @@
-import type { TokenCached } from "./types.ts"
+import type { TokenCached, TokenResponse } from "./types.ts";
 export function isTokenData(data: unknown): data is TokenCached {
-  if (data === null) return false;
+  if (!isTokenResponse(data)) return false;
+  const t = data as unknown as Record<string, unknown>;
 
-  const token = data as Record<string, unknown>;
   return (
-    typeof token.access_token === "string" &&
-    typeof token.token_type === "string" &&
-    typeof token.expires_at === "number" &&
-    typeof token.expires_in === "number" &&
-    Number.isFinite(token.expires_at)
+    typeof t.expires_at === "number" &&
+    Number.isFinite(t.expires_at) &&
+    typeof t.cache_key === "string"
+  );
+}
+export function isTokenResponse(data: unknown): data is TokenResponse {
+  if (typeof data !== "object" || data === null) return false;
+
+  const t = data as Record<string, unknown>;
+
+  return (
+    typeof t.token_type === "string" &&
+    typeof t.access_token === "string" &&
+    t.access_token.length > 0 &&
+    typeof t.expires_in === "number" &&
+    Number.isFinite(t.expires_in)
   );
 }
