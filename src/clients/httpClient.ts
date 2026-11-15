@@ -94,9 +94,11 @@ export class HttpClient {
         `${method} ${path} failed: ${res.status} ${await res.text()}`,
       );
     }
-    // e.g. 204 No Content on delete
+    // e.g. 204 No Content on delete, or a plain-text body
     const text = await res.text();
-    return (text ? JSON.parse(text) : undefined) as T;
+    if (!text) return undefined as T;
+    const isJson = res.headers.get("content-type")?.includes("json");
+    return (isJson ? JSON.parse(text) : text) as T;
   }
 
   get<T>(path: string, params?: QueryParams) {
