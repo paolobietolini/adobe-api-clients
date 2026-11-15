@@ -75,6 +75,7 @@ import type {
   ValidateProjectParams,
   ValidateSegmentParams,
 } from "../utils/types/index.ts";
+import { paginate } from "../utils/paginate.ts";
 import type { AuthClient } from "./authClient.ts";
 import { HttpClient } from "./httpClient.ts";
 
@@ -86,6 +87,29 @@ export class AnalyticsClient {
       auth,
       "https://analytics.adobe.io",
       `api/${globalCompanyId}`,
+    );
+  }
+
+  /**
+   * Iterates every item of a paged list, one request per page, lazily.
+   * Analytics pages are 0-based.
+   * @example
+   * for await (const a of analytics.paginate((page) => analytics.listAnnotations({ limit: 100, page }))) {}
+   */
+  paginate<T>(
+    fetchPage: (page: number) => Promise<PagedResponse<T>>,
+    opts: { maxPages?: number } = {},
+  ) {
+    return paginate<T>(
+      async (page) => {
+        const r = await fetchPage(page);
+        const hasMore =
+          r.lastPage !== undefined
+            ? !r.lastPage
+            : (r.number ?? page) + 1 < (r.totalPages ?? 0);
+        return { items: r.content, hasMore };
+      },
+      { start: 0, ...opts },
     );
   }
 

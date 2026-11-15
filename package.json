@@ -1,12 +1,33 @@
 {
   "name": "adobe-api-clients",
   "exports": {
-    "./auth": "./src/clients/authClient.ts",
-    "./reactor": "./src/clients/reactorClient.ts",
-    "./analytics": "./src/clients/analyticsClient.ts"
+    "./auth": {
+      "types": "./dist/clients/authClient.d.ts",
+      "default": "./dist/clients/authClient.js"
+    },
+    "./reactor": {
+      "types": "./dist/clients/reactorClient.d.ts",
+      "default": "./dist/clients/reactorClient.js"
+    },
+    "./analytics": {
+      "types": "./dist/clients/analyticsClient.d.ts",
+      "default": "./dist/clients/analyticsClient.js"
+    },
+    "./errors": {
+      "types": "./dist/utils/errors.d.ts",
+      "default": "./dist/utils/errors.js"
+    },
+    "./types": {
+      "types": "./dist/utils/types/index.d.ts",
+      "default": "./dist/utils/types/index.js"
+    },
+    "./types/reactor": {
+      "types": "./dist/utils/types/reactor/index.d.ts",
+      "default": "./dist/utils/types/reactor/index.js"
+    }
   },
   "version": "1.0.0",
-  "license":"BSD-3-Clause",
+  "license": "BSD-3-Clause",
   "description": "",
   "homepage": "https://github.com/paolobietolini/adobe-api-clients#readme",
   "bugs": {
@@ -17,16 +38,24 @@
     "url": "git+https://github.com/paolobietolini/adobe-api-clients.git"
   },
   "type": "module",
-  "main": "index.js",
   "directories": {
     "test": "tests"
   },
   "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "prepare": "npm run build",
     "test": "node --test"
   },
   "devDependencies": {
-    "@types/node": "^26.6.6"
+    "@types/node": "^26.6.6",
+    "typescript": "^5.9.3"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=20.12"
   }
 }
-
-

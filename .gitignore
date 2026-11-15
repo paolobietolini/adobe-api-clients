@@ -2,3 +2,4 @@
 .secrets/
 .cache/
 node_modules/
+dist/
