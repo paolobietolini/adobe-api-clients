@@ -20,3 +20,7 @@ export type TokenCached = TokenResponse & {
   expires_at: number;
   cache_key: string;
 };
+
+export type Credentials = AuthCredentials & {
+  orgId: string;
+}
