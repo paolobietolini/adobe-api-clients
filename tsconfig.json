@@ -1,7 +1,14 @@
 {
   "compilerOptions": {
     "types": ["node"],
+    "target": "esnext",
+    "lib": ["esnext"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "skipLibCheck": true,
     "allowImportingTsExtensions": true,
     "noEmit": true
-  }
+  },
+  "include": ["src", "tests", "examples"]
 }

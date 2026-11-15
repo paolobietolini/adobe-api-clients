@@ -21,8 +21,8 @@ function toSearchParams(params?: QueryParams): URLSearchParams {
 type BuildOptions = {
   method?: Method;
   path?: string;
-  headers?: HeadersInit;
-  body?: BodyInit;
+  headers?: RequestInit["headers"];
+  body?: RequestInit["body"];
   params?: QueryParams;
 };
 

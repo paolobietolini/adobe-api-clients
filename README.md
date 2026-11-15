@@ -62,6 +62,7 @@ ADOBE_CLIENT_ID=...
 ADOBE_CLIENT_SECRET=...
 SCOPE=openid,AdobeID,...
 ADOBE_ORG_ID=XXXXXXXX@AdobeOrg
+ANALYTICS_COMPANY_ID=yourGlobalCompanyId   # optional, only for examples/index.ts
 ```
 
 ### Analytics
@@ -152,6 +153,8 @@ npm run build    # tsc -p tsconfig.build.json -> dist/
 
 Tests mock `fetch`.
 
+`examples/index.ts` is a read-only smoke test and usage example against the live APIs (needs a `.env`): `node examples/index.ts`.
+
 If Node's `fetch` times out connecting to Adobe on your machine (IPv6 / address auto-selection), run with `NODE_OPTIONS="--dns-result-order=ipv4first --no-network-family-autoselection"`.
 
 ## Project layout
@@ -167,6 +170,7 @@ src/
     errors.ts           # AdobeApiError
     types/              # auth, http, analytics/*, reactor/*
 tests/
+examples/             # runnable usage example (not part of the package)
 ```
 
 ## License
