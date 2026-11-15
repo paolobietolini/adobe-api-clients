@@ -1,4 +1,5 @@
 import type { Method, QueryParams, TokenCached } from "../utils/types/index.ts";
+import { AdobeApiError } from "../utils/errors.ts";
 import type { AuthClient } from "./authClient.ts";
 
 function toSearchParams(params?: QueryParams): URLSearchParams {
@@ -55,6 +56,8 @@ export class HttpClient {
     return new Request(resource, {
       method,
       headers: {
+        // JSON by default when there is a body; a default/explicit header wins (e.g. application/vnd.api+json)
+        ...(body !== undefined ? { "Content-Type": "application/json" } : {}),
         ...this.#defaultHeaders,
         ...headers,
         Authorization: `Bearer ${token.access_token}`,
@@ -85,13 +88,16 @@ export class HttpClient {
         method,
         path,
         params: opts.params,
-        headers: hasBody ? { "Content-Type": "application/json" } : undefined,
         body: hasBody ? JSON.stringify(opts.body) : undefined,
       }),
     );
     if (!res.ok) {
-      throw new Error(
-        `${method} ${path} failed: ${res.status} ${await res.text()}`,
+      const text = await res.text();
+      throw new AdobeApiError(
+        res.status,
+        res.statusText || "Error",
+        `${method} ${path}: ${text}`,
+        text,
       );
     }
     // e.g. 204 No Content on delete, or a plain-text body
@@ -111,6 +117,10 @@ export class HttpClient {
 
   put<T>(path: string, body: unknown, params?: QueryParams) {
     return this.send<T>("PUT", path, { body, params });
+  }
+
+  patch<T>(path: string, body: unknown, params?: QueryParams) {
+    return this.send<T>("PATCH", path, { body, params });
   }
 
   delete<T>(path: string, params?: QueryParams) {

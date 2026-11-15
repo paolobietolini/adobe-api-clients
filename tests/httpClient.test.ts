@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, it, mock } from "node:test";
 import assert from "node:assert/strict";
 
 import { HttpClient } from "../src/clients/httpClient.ts";
+import { AdobeApiError } from "../src/utils/errors.ts";
 import type { AuthClient } from "../src/clients/authClient.ts";
 import type { TokenCached } from "../src/utils/types/index.ts";
 
@@ -166,13 +167,17 @@ describe("HttpClient responses", () => {
     assert.equal(await http.delete("a"), "deleted");
   });
 
-  it("throws with method, path, status and body on a non-OK response", async () => {
+  it("throws AdobeApiError with status and raw body on a non-OK response", async () => {
     installFetch(() => ({ status: 403, body: '{"error_code":"403003"}' }));
     const { asAuth } = fakeAuth();
     const http = new HttpClient(asAuth, "https://x.test");
     await assert.rejects(
       http.get("a"),
-      (e: Error) => /GET a failed: 403/.test(e.message) && e.message.includes("403003"),
+      (e: unknown) =>
+        e instanceof AdobeApiError &&
+        e.statusCode === 403 &&
+        e.body === '{"error_code":"403003"}' &&
+        e.message.includes("GET a"),
     );
   });
 });
@@ -209,7 +214,7 @@ describe("HttpClient 401 handling", () => {
     const { auth, asAuth } = fakeAuth();
     const http = new HttpClient(asAuth, "https://x.test");
 
-    await assert.rejects(http.get("a"), /GET a failed: 401 nope/);
+    await assert.rejects(http.get("a"), (e: unknown) => e instanceof AdobeApiError && e.statusCode === 401 && e.body === "nope");
     assert.equal(seen.length, 2);
     assert.equal(auth.invalidate.mock.callCount(), 1);
   });
@@ -219,7 +224,7 @@ describe("HttpClient 401 handling", () => {
     const { auth, asAuth } = fakeAuth();
     const http = new HttpClient(asAuth, "https://x.test");
 
-    await assert.rejects(http.get("a"), /500/);
+    await assert.rejects(http.get("a"), (e: unknown) => e instanceof AdobeApiError && e.statusCode === 500);
     assert.equal(seen.length, 1);
     assert.equal(auth.invalidate.mock.callCount(), 0);
   });
